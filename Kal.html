@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bubble-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 150, 200, 0.05));
+            opacity: 0.25;
+            filter: blur(0px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+            padding: 10px;
+            letter-spacing: 0.05em;
+        }
+
+        .bubble:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bubble:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            right: 15%;
+            animation: float 8s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 50%;
+            left: 5%;
+            animation: float 10s ease-in-out infinite;
+            animation-delay: 2s;
+            font-size: 15px;
+        }
+
+        .bubble:nth-child(4) {
+            width: 70px;
+            height: 70px;
+            top: 60%;
+            right: 10%;
+            animation: float 7s ease-in-out infinite;
+            animation-delay: 0.5s;
+        }
+
+        .bubble:nth-child(5) {
+            width: 90px;
+            height: 90px;
+            top: 30%;
+            left: 50%;
+            animation: float 9s ease-in-out infinite;
+            animation-delay: 1.5s;
+            font-size: 15px;
+        }
+
+        .bubble:nth-child(6) {
+            width: 100px;
+            height: 100px;
+            bottom: 10%;
+            right: 30%;
+            animation: float 7.5s ease-in-out infinite;
+            animation-delay: 2.5s;
+        }
+
+        .bubble:nth-child(7) {
+            width: 85px;
+            height: 85px;
+            bottom: 20%;
+            left: 20%;
+            animation: float 8.5s ease-in-out infinite;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px);
+            }
+
+            25% {
+                transform: translateY(-30px) translateX(20px);
+            }
+
+            50% {
+                transform: translateY(-60px) translateX(-20px);
+            }
+
+            75% {
+                transform: translateY(-30px) translateX(30px);
+            }
+        }
+
+        .kal {
+            background: linear-gradient(145deg, rgba(48, 43, 99, 0.8) 0%, rgba(36, 36, 62, 0.95) 100%);
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow:
+                0 60px 120px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            z-index: 10;
+            position: relative;
+        }
+
+        .display-cell {
+            text-align: right;
+            padding: 20px 12px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 6px;
+        }
+
+        #expression {
+            color: rgba(200, 150, 255, 0.7);
+            font-size: 14px;
+            min-height: 20px;
+            margin-bottom: 6px;
+            letter-spacing: 0.05em;
+            display: block;
+        }
+
+        #display {
+            color: #fff;
+            font-size: 52px;
+            font-weight: 200;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            transition: font-size 0.15s ease;
+            text-shadow: 0 0 40px rgba(200, 120, 255, 0.4);
+            word-break: break-all;
+            display: block;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 10px;
+        }
+
+        td {
+            padding: 0;
+        }
+
+        button {
+            width: 68px;
+            height: 64px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            transition: all 0.2s ease;
+            outline: none;
+            letter-spacing: -0.01em;
+            background: rgba(255, 255, 255, 0.08);
+            color: #e8e8f0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button.fn {
+            background: rgba(100, 80, 180, 0.2);
+            color: #c4aaff;
+            box-shadow: 0 4px 15px rgba(100, 80, 180, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        button.op {
+            background: linear-gradient(135deg, rgba(180, 100, 255, 0.4) 0%, rgba(140, 80, 220, 0.3) 100%);
+            color: #e8d4ff;
+            box-shadow: 0 4px 15px rgba(180, 100, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        button.eq {
+            background: linear-gradient(135deg, #b24bff 0%, #7c3aed 100%);
+            color: #fff;
+            font-weight: 400;
+            box-shadow: 0 8px 25px rgba(178, 75, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            width: 68px;
+            height: 64px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        button.op:hover {
+            background: linear-gradient(135deg, rgba(180, 100, 255, 0.5) 0%, rgba(140, 80, 220, 0.4) 100%);
+        }
+
+        button.eq:hover {
+            background: linear-gradient(135deg, #c561ff 0%, #8d47ff 100%);
+            box-shadow: 0 10px 30px rgba(178, 75, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bubble-container">
+        <div class="bubble">Halo</div>
+        <div class="bubble">Its.Rif</div>
+        <div class="bubble">Manchester</div>
+        <div class="bubble">United</div>
+        <div class="bubble">Matematika</div>
+        <div class="bubble">Menyenangkan</div>
+        <div class="bubble">HelloWorld</div>
+    </div>
+
+    <div class="kal">
+        <table>
+            <tr>
+                <td colspan="4" class="display-cell">
+                    <span id="expression"></span>
+                    <span id="display">0</span>
+                </td>
+            </tr>
+            <tr>
+                <td><button onclick="handleBtn('1')">1</button></td>
+                <td><button onclick="handleBtn('2')">2</button></td>
+                <td><button onclick="handleBtn('3')">3</button></td>
+                <td><button class="op" onclick="handleBtn('+')">+</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="handleBtn('4')">4</button></td>
+                <td><button onclick="handleBtn('5')">5</button></td>
+                <td><button onclick="handleBtn('6')">6</button></td>
+                <td><button class="op" onclick="handleBtn('−')">−</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="handleBtn('7')">7</button></td>
+                <td><button onclick="handleBtn('8')">8</button></td>
+                <td><button onclick="handleBtn('9')">9</button></td>
+                <td><button class="op" onclick="handleBtn('×')">×</button></td>
+            </tr>
+            <tr>
+                <td><button class="fn" onclick="handleBtn('C')">C</button></td>
+                <td><button onclick="handleBtn('0')">0</button></td>
+                <td><button class="eq" onclick="handleBtn('=')">=</button></td>
+                <td><button class="op" onclick="handleBtn('÷')">÷</button></td>
+            </tr>
+
+        </table>
+    </div>
+
+    <script>
+        let display = '0';
+        let expression = '';
+        let prevValue = null;
+        let operator = null;
+        let waiting = false;
+
+        const dispEl = document.getElementById('display');
+        const exprEl = document.getElementById('expression');
+
+        function updateDisplay() {
+            const val = display.length > 9
+                ? parseFloat(display).toExponential(4)
+                : display;
+            dispEl.textContent = val;
+            dispEl.style.fontSize = val.length > 8 ? '32px' : '52px';
+            exprEl.textContent = expression;
+        }
+
+        function calculate(a, b, op) {
+            switch (op) {
+                case '+': return parseFloat((a + b).toPrecision(10));
+                case '−': return parseFloat((a - b).toPrecision(10));
+                case '×': return parseFloat((a * b).toPrecision(10));
+                case '÷': return b !== 0 ? parseFloat((a / b).toPrecision(10)) : 'Error';
+            }
+        }
+
+        function handleBtn(btn) {
+            if (btn >= '0' && btn <= '9') {
+                if (waiting) { display = btn; waiting = false; }
+                else display = display === '0' ? btn : display + btn;
+
+            } else if (btn === '.') {
+                if (waiting) { display = '0.'; waiting = false; return updateDisplay(); }
+                if (!display.includes('.')) display += '.';
+
+            } else if (['+', '−', '×', '÷'].includes(btn)) {
+                const input = parseFloat(display);
+                if (prevValue !== null && !waiting) {
+                    const result = calculate(prevValue, input, operator);
+                    display = String(result);
+                    prevValue = result;
+                } else {
+                    prevValue = input;
+                }
+                operator = btn;
+                expression = `${prevValue} ${btn}`;
+                waiting = true;
+
+            } else if (btn === '=') {
+                if (operator && prevValue !== null) {
+                    const input = parseFloat(display);
+                    const result = calculate(prevValue, input, operator);
+                    display = String(result);
+                    expression = '';
+                    prevValue = null;
+                    operator = null;
+                    waiting = true;
+                }
+
+            } else if (btn === 'C') {
+                display = '0'; expression = ''; prevValue = null; operator = null; waiting = false;
+            }
+
+            updateDisplay();
+        }
+
+        updateDisplay();
+    </script>
+</body>
+
+</html>
